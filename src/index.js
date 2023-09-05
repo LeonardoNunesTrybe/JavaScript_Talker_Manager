@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
+const generateToken = require('./utils/generateToken');
 
 const app = express();
 app.use(express.json());
@@ -49,3 +50,17 @@ app.get('/talker/:id', async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 });
+
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  if ([email, password].includes(undefined)) {
+    return res.status(401).json({ message: 'Campos ausentes' });
+  }
+
+  const token = generateToken();
+
+  return res.status(200).json({ token });
+});
+
+module.exports = app;

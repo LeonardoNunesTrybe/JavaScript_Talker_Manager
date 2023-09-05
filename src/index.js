@@ -36,3 +36,16 @@ app.get('/talker', async (req, res) => {
     res.status(500).send({ message: error.message });
   }
 });
+
+app.get('/talker/:id', async (req, res) => {
+  try {
+    const talkers = await readFile();
+    const talker = talkers.find(({ id }) => id === Number(req.params.id));
+    if (!talker) {
+      return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+    }
+    return res.status(200).json(talker);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+});

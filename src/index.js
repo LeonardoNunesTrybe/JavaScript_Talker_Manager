@@ -37,14 +37,21 @@ const readFile = async () => {
   }
 };
 
-/* / const writeFile = async () => {
+app.get('/talker/search', auth, async (req, res) => {
   try {
-    await fs.writeFile(talkerPath);
-    return JSON.stringify(data);    
+    const { q } = req.query;
+    const talkers = await readFile();
+
+    if (!q || q === '') {
+      return res.status(200).json(talkers);
+    }
+
+    const filteredTalkers = talkers.filter((talker) => talker.name.includes(q));
+      res.status(200).json(filteredTalkers);
   } catch (error) {
-    console.error(`Arquivo não pôde ser escrito: ${error}`);
+    res.status(500).send({ message: error.message });
   }
-}; / */
+});
 
 app.get('/talker', async (req, res) => {
   try {

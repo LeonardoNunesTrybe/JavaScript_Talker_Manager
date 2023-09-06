@@ -2,9 +2,14 @@ const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
 const generateToken = require('./utils/generateToken');
-// const auth = require('./middlewares/auth');
+const auth = require('./middlewares/auth');
 const validateEmail = require('./middlewares/validateEmail');
 const validatePassword = require('./middlewares/validatePassword');
+const validateAge = require('./middlewares/validateAge');
+const validateName = require('./middlewares/validateName');
+const validateRate = require('./middlewares/validateRate');
+const validateTalk = require('./middlewares/validateTalk');
+const validateWatchedAt = require('./middlewares/validateWatchedAt');
 
 const app = express();
 app.use(express.json());
@@ -31,6 +36,15 @@ const readFile = async () => {
     console.error(`Arquivo não pôde ser lido: ${error}`);
   }
 };
+
+/* / const writeFile = async () => {
+  try {
+    const data = await fs.writeFile(talkerPath);
+    return JSON.stringify(data);    
+  } catch (error) {
+    console.error(`Arquivo não pôde ser escrito: ${error}`);
+  }
+}; / */
 
 app.get('/talker', async (req, res) => {
   try {
@@ -64,6 +78,28 @@ app.post('/login', validateEmail, validatePassword, async (req, res) => {
   const token = generateToken();
 
   return res.status(200).json({ token });
+});
+
+app.post('/talker', 
+auth, 
+validateName, 
+validateAge, 
+validateTalk, 
+validateWatchedAt, 
+validateRate, 
+async (req, res) => {
+  const { name, age, talk } = req.body;
+  const talkers = await readFile();
+  const nextId = talkers.length + 1;
+  const newTalker = { id: nextId, name, age, talk };
+  talkers.push(newTalker);
+
+  await fs.writeFile('./src/talker.json', JSON.stringify(talkers), (error) => {
+    if (error) {
+      return res.status(400).json({ message: 'Erro ao escrever no arquivo talker.json' });
+    }
+  });
+  res.status(201).json(newTalker);
 });
 
 module.exports = app;

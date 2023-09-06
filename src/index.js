@@ -102,17 +102,29 @@ async (req, res) => {
   res.status(201).json(newTalker);
 });
 
-/* / app.put('/talker/:id', async (req, res) => {
+app.put('/talker/:id', 
+auth, 
+validateName, 
+validateAge, 
+validateTalk, 
+validateWatchedAt, 
+validateRate, 
+async (req, res) => {
   try {
+    const { id } = req.params;
+    const { name, age, talk } = req.body;
     const talkers = await readFile();
-    const talker = talkers.find(({ id }) => id === Number(req.params.id));
-    if (!talker) {
+    const index = talkers.findIndex((talker) => talker.id === Number(id));
+    if (index === -1) {
       return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
     }
-    return res.status(200).json(talker);
+    talkers[index] = { id: Number(id), name, age, talk };
+    const updateTalker = JSON.stringify(talkers, null, 2);
+    await fs.writeFile(talkerPath, updateTalker);
+    res.status(200).json(talkers[index]);
   } catch (error) {
     res.status(500).send({ message: error.message });
   }
-}); / */
+});
 
 module.exports = app;

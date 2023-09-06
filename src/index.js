@@ -127,4 +127,17 @@ async (req, res) => {
   }
 });
 
+app.delete('/talker/:id', auth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const talkers = await readFile();
+    const filteredTalkers = talkers.filter((talker) => talker.id !== Number(id));
+    const updateTalkers = JSON.stringify(filteredTalkers, null, 2);
+    await fs.writeFile(talkerPath, updateTalkers);
+    res.status(204).end();
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+});
+
 module.exports = app;

@@ -1,4 +1,6 @@
-// eslint-disable-next-line complexity
+function isValidRate(rate) {
+  return Number.isInteger(rate) && rate >= 1 && rate <= 5;
+}
 module.exports = (req, res, next) => {
   const { talk } = req.body;
 
@@ -6,7 +8,7 @@ module.exports = (req, res, next) => {
     return res.status(400).json({ message: 'O campo "rate" é obrigatório' });
   }
 
-  if (!Number.isInteger(talk.rate) || talk.rate < 1 || talk.rate > 5) {
+  if (!isValidRate(talk.rate)) {
     return res.status(400)
     .json({ message: 'O campo "rate" deve ser um número inteiro entre 1 e 5' });
   }

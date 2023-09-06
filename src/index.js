@@ -39,7 +39,7 @@ const readFile = async () => {
 
 /* / const writeFile = async () => {
   try {
-    const data = await fs.writeFile(talkerPath);
+    await fs.writeFile(talkerPath);
     return JSON.stringify(data);    
   } catch (error) {
     console.error(`Arquivo não pôde ser escrito: ${error}`);
@@ -101,5 +101,18 @@ async (req, res) => {
   });
   res.status(201).json(newTalker);
 });
+
+/* / app.put('/talker/:id', async (req, res) => {
+  try {
+    const talkers = await readFile();
+    const talker = talkers.find(({ id }) => id === Number(req.params.id));
+    if (!talker) {
+      return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+    }
+    return res.status(200).json(talker);
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+}); / */
 
 module.exports = app;

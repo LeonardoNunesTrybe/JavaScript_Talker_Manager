@@ -10,6 +10,7 @@ const validateName = require('./middlewares/validateName');
 const validateRate = require('./middlewares/validateRate');
 const validateTalk = require('./middlewares/validateTalk');
 const validateWatchedAt = require('./middlewares/validateWatchedAt');
+const validateRateSearch = require('./middlewares/validateRateSearch');
 
 const app = express();
 app.use(express.json());
@@ -37,16 +38,16 @@ const readFile = async () => {
   }
 };
 
-app.get('/talker/search', auth, async (req, res) => {
+app.get('/talker/search', auth, validateRateSearch, async (req, res) => {
   try {
-    const { q } = req.query;
+    const { q, rate } = req.query;
     const talkers = await readFile();
 
-    if (!q || q === '') {
-      return res.status(200).json(talkers);
-    }
+    // if (!q || q === '') {
+    //   return res.status(200).json(talkers);
+    // }
 
-    const filteredTalkers = talkers.filter((talker) => talker.name.includes(q));
+    const filteredTalkers = talkers.filter((talker) => talker.name.includes(q, rate));
       res.status(200).json(filteredTalkers);
   } catch (error) {
     res.status(500).send({ message: error.message });
